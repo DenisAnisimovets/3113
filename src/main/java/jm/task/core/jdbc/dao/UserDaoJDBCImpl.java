@@ -56,25 +56,23 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
             System.out.println("User с именем – " + name + " добавлен в базу данных");
+            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
         }
-        connection.commit();
-        connection.setAutoCommit(true);
     }
 
     public void removeUserById(long id) throws SQLException {
         try (PreparedStatement pstm = connection.prepareStatement("DELETE FROM users WHERE id = ?")) {
-            connection.setAutoCommit(false);
             pstm.setLong(1, id);
             pstm.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
         }
-        connection.commit();
-        connection.setAutoCommit(true);
+
     }
 
     public List<User> getAllUsers() throws SQLException {
@@ -83,7 +81,6 @@ public class UserDaoJDBCImpl implements UserDao {
         String sql = "SELECT id, name, lastName, age from users";
 
         try (Statement statement = connection.createStatement()) {
-            connection.setAutoCommit(false);
             ResultSet resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
@@ -93,14 +90,13 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setLastName(resultSet.getString("lastName"));
                 user.setAge(resultSet.getByte("age"));
                 allUser.add(user);
+                connection.commit();
             }
 
         } catch (Exception e) {
             connection.rollback();
             e.printStackTrace();
         }
-        connection.commit();
-        connection.setAutoCommit(true);
         return allUser;
     }
 
@@ -110,12 +106,11 @@ public class UserDaoJDBCImpl implements UserDao {
             connection.setAutoCommit(false);
             statement.executeUpdate(sql);
             System.out.println("Таблица очищена");
+            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
             System.out.println("Не удалось очистить");
         }
-        connection.commit();
-        connection.setAutoCommit(true);
     }
 }
