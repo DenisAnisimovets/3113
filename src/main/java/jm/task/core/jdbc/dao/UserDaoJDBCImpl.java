@@ -30,7 +30,6 @@ public class UserDaoJDBCImpl implements UserDao {
             connection.rollback();
             e.printStackTrace();
         }
-        connection.commit();
     }
 
     public void dropUsersTable() throws SQLException {
@@ -103,7 +102,6 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(sql);
             connection.commit();
             System.out.println("Таблица очищена");
-            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
