@@ -87,6 +87,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setLastName(resultSet.getString("lastName"));
                 user.setAge(resultSet.getByte("age"));
                 allUser.add(user);
+                connection.commit();
             }
             connection.commit();
 
@@ -103,6 +104,7 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate(sql);
             connection.commit();
             System.out.println("Таблица очищена");
+            connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             e.printStackTrace();
