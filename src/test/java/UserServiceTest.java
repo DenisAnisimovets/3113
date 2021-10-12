@@ -4,6 +4,8 @@ import jm.task.core.jdbc.service.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import jm.task.core.jdbc.model.User;
+
 import java.util.List;
 
 public class UserServiceTest {

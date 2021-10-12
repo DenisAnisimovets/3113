@@ -1,10 +1,11 @@
 package jm.task.core.jdbc.util;
 
-//import com.mysql.fabric.jdbc.FabricMySQLDriver;
+import jm.task.core.jdbc.model.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 public class Util {
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
@@ -12,16 +13,31 @@ public class Util {
     private static final String LOGIN = "root";
     private static final String PASSWORD = "root";
 
-    public static Connection getConnection() {
-        Connection connection = null;
-        try {
+    private static SessionFactory sessionFactory = null;
 
-            Class.forName(DRIVER);
-            connection = DriverManager.getConnection(HOST, LOGIN, PASSWORD);
-            connection.setAutoCommit(false);
-        } catch (SQLException | ClassNotFoundException e) {
+    public static SessionFactory getConnection() {
+
+        try {
+            Configuration configuration = new Configuration()
+                    .setProperty("hibernate.connection.driver_class", DRIVER)
+                    .setProperty("hibernate.connection.url", HOST)
+                    .setProperty("hibernate.connection.username", LOGIN)
+                    .setProperty("hibernate.connection.password", PASSWORD)
+                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+                    .addAnnotatedClass(User.class);
+
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-        return connection;
+        return sessionFactory;
     }
+
+    public static void closeConnection() {
+        if (sessionFactory != null)
+            sessionFactory.close();
+    }
+
 }
